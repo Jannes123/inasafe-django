@@ -86,8 +86,12 @@
     earthquakeIcon = createIconMarker(
             project_icon_path, project_shadow_icon_path);
     var jsonTableContents = [];
+    var eventTable = null;
+    var search_results = null;
+    var events = null;
     function getEarthquakeEventsJson(event_json)
       {
+          events = event_json;
           console.log('mainGetEarthquakeEventsJs');
           console.log(event_json);
           for (var i = 0; i < event_json.features.length; ++i) {
@@ -102,9 +106,10 @@
           jsonTableContents[i] = event_json.features[i].properties;
           }
           map.addLayer(markers);
-          var eventTable = $('#realtime-table').dynatable({
+          eventTable = $('#realtime-table').dynatable({
             table:{defaultColumnIdStyle: 'underscore'},
-            dataset: {records: jsonTableContents}});
+            dataset: {records: jsonTableContents}})
+                  .bind('dynatable:afterProcess', updateMap);
       }
 
     function onEachFeature(feature, layer)
@@ -114,6 +119,30 @@
           layer.bindPopup(feature.properties.popupContent);
         }
       }
+    // update map markers to represent table contents.
+    function updateMap(){
+        //clear map
+         markers.clearLayers();
+         console.log('Update Events');
+         console.log(eventTable.data().dynatable.records.count());
+         search_results = eventTable.data().dynatable.records.getFromTable();
+         for (var i = 0; i < search_results.length; ++i) {
+             console.log(search_results[i].shake_id);
+             for (var j = 0; j < events.features.length; ++j) {
+                 console.log("iter");
+                 if (events.features[j].properties.shake_id == search_results[i].shake_id) {
+                     console.log('found it..');
+                     L.geoJson(events.features[i], {
+                         onEachFeature: onEachFeature,
+                         pointToLayer: function (feature, latlng) {
+                             return L.marker(latlng, {icon: earthquakeIcon});
+                         }
+                     }).addTo(markers);
+                 }
+             }
+         }
+         map.addLayer(markers);
+     }
 
     $(document).ready( function() {
         $.ajax({
