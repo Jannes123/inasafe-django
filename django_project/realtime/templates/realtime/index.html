@@ -34,7 +34,7 @@
     </div>
     <div class="panel-body">
         <div class="input-group">
-          <input id="realtime-filter-minimum-magnitude" type="text" class="form-control" placeholder="Minimum Magnitude ..">
+          <input id="realtime-filter-minimum-magnitude" type="search" class="form-control" placeholder="Minimum Magnitude ..">
           <span class="input-group-btn">
             <button class="btn btn-default" type="button">Go!</button>
           </span>
@@ -59,9 +59,6 @@
       layers: [base_map]
     });
     map.fitWorld().zoomIn();
-
-    //test marker london
-    var marker = L.marker([51.5, -0.09]).addTo(map);
 
     // Create Data Privacy Control
     data_privacy_control = createDataPrivacyControl();
@@ -114,10 +111,34 @@
           }
           map.addLayer(markers);
           eventTable = $('#realtime-table').dynatable({
-            table:{defaultColumnIdStyle: 'underscore'},
-            dataset: {records: jsonTableContents}})
+              table:{defaultColumnIdStyle: 'underscore'},
+              dataset: {records: jsonTableContents},
+              inputs: {queries: $('#min-magnitude')}})
+                  .bind('dynatable:init', minMagSearch)
                   .bind('dynatable:afterProcess', updateMap);
+
       }
+
+    //WIP: hook custom query function into functions of dynatable
+      // will need four filters according to moqups page
+    function minMagSearch(){
+        eventTable.data().dynatable.queries.functions['min-magnitude'] = function(record, queryValue) {
+        return parseFloat(record.magnitude.replace(/,/,'')) >= parseFloat(queryValue);
+        }
+    }
+
+    //WIP: fire off search through dynatable
+      $('#realtime-filter-minimum-magnitude').change( function() {
+          console.log('boo');
+          var value = $(this).val();
+          console.log(value)
+          if (value === "") {
+              eventTable.data().dynatable.queries.remove("min-magnitude");
+          } else {
+              eventTable.data().dynatable.queries.add("min-magnitude",value);
+          }
+          eventTable.data().dynatable.process();
+      });
 
     function onEachFeature(feature, layer)
       {
