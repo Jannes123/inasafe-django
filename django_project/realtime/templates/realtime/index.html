@@ -28,8 +28,19 @@
 {% endblock main_content %}
 
 {% block filter_content %}
-    {{ form | safe}}
-    <input type="submit" value="Update">
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Search Filters</h3>
+    </div>
+    <div class="panel-body">
+        <div class="input-group">
+          <input id="realtime-filter-minimum-magnitude" type="text" class="form-control" placeholder="Minimum Magnitude ..">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button">Go!</button>
+          </span>
+        </div>
+    </div>
+</div>
 {% endblock filter_content %}
 
 {% block js_container %}
@@ -92,11 +103,7 @@
     function getEarthquakeEventsJson(event_json)
       {
           events = event_json;
-          console.log('mainGetEarthquakeEventsJs');
-          console.log(event_json);
           for (var i = 0; i < event_json.features.length; ++i) {
-              console.log('getEarthquakeEventsJs');
-              console.log(event_json.features[i]);
               L.geoJson(event_json.features[i], {
                   onEachFeature: onEachFeature,
                   pointToLayer: function (feature, latlng) {
@@ -123,15 +130,10 @@
     function updateMap(){
         //clear map
          markers.clearLayers();
-         console.log('Update Events');
-         console.log(eventTable.data().dynatable.records.count());
          search_results = eventTable.data().dynatable.records.getFromTable();
          for (var i = 0; i < search_results.length; ++i) {
-             console.log(search_results[i].shake_id);
              for (var j = 0; j < events.features.length; ++j) {
-                 console.log("iter");
                  if (events.features[j].properties.shake_id == search_results[i].shake_id) {
-                     console.log('found it..');
                      L.geoJson(events.features[i], {
                          onEachFeature: onEachFeature,
                          pointToLayer: function (feature, latlng) {
@@ -150,7 +152,6 @@
           url: get_events_url,
           success: getEarthquakeEventsJson
             });
-//    document.getElementById('#dynatable-query-search-realtime-table').className = 'form-control';
       });
 
   </script>
