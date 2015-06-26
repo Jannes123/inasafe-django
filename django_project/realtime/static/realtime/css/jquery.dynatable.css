@@ -54,6 +54,11 @@ th a:hover {
   text-decoration: none;
 }
 
+.dynatable-sort-header {
+  background: #fff;
+  color: #181bff;
+}
+
 .dynatable-active-page {
   background: #71AF5A;
   border-radius: 5px;

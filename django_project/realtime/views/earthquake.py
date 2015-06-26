@@ -20,7 +20,10 @@ from realtime.serializers.earthquake_serializer import (
     )
 from realtime.app_settings import LEAFLET_TILES
 from realtime.forms import FilterForm
-from realtime.tests.model_factories import EarthquakeFactory
+from realtime.tests.model_factories import (
+    EarthquakeFactory,
+    EarthquakeReportFactory
+)
 from rest_framework import status, mixins
 from realtime.models.earthquake import Earthquake, EarthquakeReport
 from realtime.serializers.earthquake_serializer import EarthquakeSerializer, \
@@ -91,6 +94,7 @@ def populate(request):
     if request.method == 'GET':
         earthquake = EarthquakeFactory.create()
         earthquake.save()
+        earthquake_report = EarthquakeReportFactory.create()
         return index(request)
 
 

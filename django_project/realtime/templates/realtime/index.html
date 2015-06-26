@@ -8,6 +8,7 @@
   {% leaflet_css %}
   <link rel="stylesheet" href="{% static 'realtime/css/MarkerCluster.css' %}"/>
   <link rel="stylesheet" href="{% static 'realtime/css/MarkerCluster.user-map.css' %}"/>
+  <link rel="stylesheet" href="{% static 'realtime/css/jquery.dynatable.css' %}"/>
   <!--[if lte IE 8]>
     <link rel="stylesheet" href="{% static 'realtime/css/MarkerCluster.user-map.ie.css' %}" />
   <![endif]-->
@@ -20,9 +21,10 @@
 {% block main_content %}
   <!-- Leaflet Map div -->
   {% leaflet_map "map" %}
-
-  <!-- All the templates from view-->
-
+  <script id="legend" type="text/template">
+      <h4>Legend</h4>
+          <img height='30' width='20' src='{% static 'realtime/img/earthquake.png' %}'>Earthquake<br>
+  </script>
 {% endblock main_content %}
 
 {% block filter_content %}
@@ -79,27 +81,11 @@
        })(class_name)
        });
 
-    project_icon_path = "{% static 'realtime/img/inasafe-icon.png' %}";
-    project_shadow_icon_path = "{% static  'realtime/img/shadow-icon.png' %}";
+    project_icon_path = "{% static 'realtime/img/earthquake.png' %}";
+    project_shadow_icon_path = "{% static  'realtime/img/earthquake-shadow.png' %}";
     earthquakeIcon = createIconMarker(
             project_icon_path, project_shadow_icon_path);
-
     var jsonTableContents = [];
-      var exampleJson = [
-                      {
-                        "band": "Weezer",
-                        "song": "El Scorcho"
-                      },
-                      {
-                        "band": "deefr",
-                        "song": "El Scorcho"
-                      },
-                      {
-                        "band": "fdhgh",
-                        "song": "thing"
-                      },
-                    ];
-
     function getEarthquakeEventsJson(event_json)
       {
           console.log('mainGetEarthquakeEventsJs');
@@ -128,9 +114,6 @@
           layer.bindPopup(feature.properties.popupContent);
         }
       }
-      //create markers from JSON url
-
-    //var eventTable = $('#realtime-table').dynatable()
 
     $(document).ready( function() {
         $.ajax({
@@ -138,25 +121,8 @@
           url: get_events_url,
           success: getEarthquakeEventsJson
             });
-
+//    document.getElementById('#dynatable-query-search-realtime-table').className = 'form-control';
       });
-//      function updateFilter() {
-//          $.ajax({
-//            type: 'GET',
-//            url: url,
-//            dataType: 'json',
-//            data: {
-//              project: project['name']
-//            },
-//            success: function (response) {
-//              L.geoJson(
-//                  response.users,
-//                  {
-//                    onEachFeature: onEachFeature,
-//                    pointToLayer: function (feature, latlng) {
-//                      return L.marker(latlng,{icon: project['icon'] });
-//                    }
-//                  }).addTo(project['layer']);
-//            }});
+
   </script>
 {% endblock js_container %}
